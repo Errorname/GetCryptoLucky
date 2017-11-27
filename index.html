@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Get Crypto-Lucky</title>
+
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<h1>Get Crypto-Lucky</h1>
+		<div id="app">
+
+			<button type="button" @click="getLucky()">Get Lucky</button>
+			<br><br>
+			<b>Previous addresses:</b>
+			<table>
+				<thead>
+					<tr>
+						<th>Address pair (public/wif)</th>
+						<th>Coin</th>
+						<th>Amount</th>
+						<th>Price</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="address in addresses">
+						<td>
+							<small>{{ address.pair.publicAddress }}</small><br>
+							<small>{{ address.pair.privateWif }}</small>
+						</td>
+						<td>{{ address.coin }}</td>
+						<td>{{ address.amount }}{{ coins[address.coin].symbol }}</td>
+						<td>{{ address.price }}$</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+		<script src="libs/jquery.min.js"></script>
+		<script src="libs/vue.js"></script>
+		<script src="libs/coinkey.bundle.js"></script>
+		<script>
+
+			var app = new Vue({
+				el: '#app',
+				data: {
+					addresses: [],
+					coins: {
+						'BTC': {
+							name: 'Bitcoin',
+							code: 'BTC',
+							symbol: '฿',
+							price: null
+						},
+						/*'DOGE': {
+							name: 'Dogecoin',
+							code: 'DOGE',
+							symbol: 'Ð'
+						}*/
+					}
+				},
+				mounted: function() {
+					for (var coin in this.coins) {
+						this.initCoin(coin);
+					}
+				},
+				methods: {
+					createPair: function() {
+						return coinkey.createRandom();
+					},
+					checkBalance: function(address, callback) {
+						$.ajax('https://blockchain.info/q/addressbalance/'+address,{
+							success: function(data) {
+
+								// Convert satoshis to bitcoins
+								var satoshis = data;
+								var bitcoins = satoshis/100000000;
+
+								callback(bitcoins);
+							}
+						});
+					},
+					initCoin: function(coin) {
+						$.ajax('https://api.cryptonator.com/api/ticker/'+coin+'-usd',{
+							success: function(data) {
+								app.coins[coin].price = parseFloat(data.ticker.price);
+							}
+						});
+					},
+					getLucky: function() {
+
+						var coin = 'BTC';
+						var pair = this.createPair();
+
+						address = pair.publicAddress;
+						//address = "16rCmCmbuWDhPjWTrpQGaU3EPdZF7MTdUk";
+
+						this.checkBalance(address, function(amount) {
+							var address = {
+								coin: coin,
+								amount: amount,
+								price: amount * this.coins[coin].price,
+								pair: pair
+							};
+							this.addresses.unshift(address);
+							console.log(address);
+						}.bind(this));
+					}
+				}
+			});
+
+		</script>
+	</body>
+</html>
