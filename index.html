@@ -27,8 +27,8 @@
 							<small>{{ address.pair.publicAddress }}</small><br>
 							<small>{{ address.pair.privateWif }}</small>
 						</td>
-						<td>{{ address.coin }}</td>
-						<td>{{ address.amount }}{{ coins[address.coin].symbol }}</td>
+						<td>{{ address.coin.name }}</td>
+						<td>{{ address.amount }}{{ address.coin.symbol }}</td>
 						<td>{{ address.price }}$</td>
 					</tr>
 				</tbody>
@@ -39,71 +39,72 @@
 		<script src="libs/jquery.min.js"></script>
 		<script src="libs/vue.js"></script>
 		<script src="libs/coinkey.bundle.js"></script>
+		<script src="libs/coininfo.bundle.js"></script>
+		<script src="coins.js"></script>
 		<script>
 
 			var app = new Vue({
 				el: '#app',
 				data: {
 					addresses: [],
-					coins: {
-						'BTC': {
-							name: 'Bitcoin',
-							code: 'BTC',
-							symbol: '฿',
-							price: null
-						},
-						/*'DOGE': {
-							name: 'Dogecoin',
-							code: 'DOGE',
-							symbol: 'Ð'
-						}*/
-					}
+					coins: window.coins
 				},
 				mounted: function() {
-					for (var coin in this.coins) {
-						this.initCoin(coin);
+					for (var code in this.coins) {
+						this.initCoin(this.coins[code]);
 					}
 				},
 				methods: {
-					createPair: function() {
-						return coinkey.createRandom();
+					pickRandomCoin: function() {
+						var keys = Object.keys(this.coins);
+						return this.coins[keys[Math.floor(keys.length * Math.random())]];
 					},
-					checkBalance: function(address, callback) {
-						$.ajax('https://blockchain.info/q/addressbalance/'+address,{
-							success: function(data) {
-
-								// Convert satoshis to bitcoins
-								var satoshis = data;
-								var bitcoins = satoshis/100000000;
-
-								callback(bitcoins);
-							}
-						});
+					createPair: function(coin) {
+						return coinkey.createRandom(coininfo(coin.code));
+					},
+					checkBalance: function(coin, address, callback) {
+						//callback(0);
+						var url = coin.api.url.replace('{address}',address);
+						var success = function(data) {
+							callback(coin.api.callback(data));
+						}
+						if (coin.api.proxy) {
+							$.ajax('proxy.php',{
+								data: {
+									csurl: url
+								},
+								success: success
+							});
+						} else {
+							$.ajax(url,{
+								success: success
+							});
+						}
 					},
 					initCoin: function(coin) {
-						$.ajax('https://api.cryptonator.com/api/ticker/'+coin+'-usd',{
+						$.ajax('https://api.cryptonator.com/api/ticker/'+coin.code+'-usd',{
 							success: function(data) {
-								app.coins[coin].price = parseFloat(data.ticker.price);
+								coin.price = parseFloat(data.ticker.price);
 							}
 						});
 					},
 					getLucky: function() {
 
-						var coin = 'BTC';
-						var pair = this.createPair();
+						var coin = this.pickRandomCoin();
+						var pair = this.createPair(coin);
 
 						address = pair.publicAddress;
 						//address = "16rCmCmbuWDhPjWTrpQGaU3EPdZF7MTdUk";
 
-						this.checkBalance(address, function(amount) {
+						this.checkBalance(coin, address, function(amount) {
 							var address = {
 								coin: coin,
 								amount: amount,
-								price: amount * this.coins[coin].price,
+								price: amount * coin.price,
 								pair: pair
 							};
 							this.addresses.unshift(address);
-							console.log(address);
+							//console.log(address);
 						}.bind(this));
 					}
 				}
