@@ -4,36 +4,78 @@
 		<title>Get Crypto-Lucky</title>
 
 		<meta charset="utf-8">
+
+		<link rel="stylesheet" href="libs/spectre/spectre.min.css">
+		<link rel="stylesheet" href="libs/spectre/spectre-icons.min.css">
+		<style>
+			.card .card-header {
+				padding-bottom: 0.8rem;
+			}
+
+			#history td {
+				padding: 0 0.4rem;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>Get Crypto-Lucky</h1>
-		<div id="app">
+		<div id="app" class="container grid-lg text-center">
+			<h1 style="margin-top: 1rem; margin-bottom: 1rem;">Get Crypto-Lucky</h1>
 
-			<button type="button" @click="getLucky()">Get Lucky</button>
-			<br><br>
-			<b>Previous addresses:</b>
-			<table>
-				<thead>
-					<tr>
-						<th>Address pair (public/wif)</th>
-						<th>Coin</th>
-						<th>Amount</th>
-						<th>Price</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="address in addresses">
-						<td>
-							<small>{{ address.pair.publicAddress }}</small><br>
-							<small>{{ address.pair.privateWif }}</small>
-						</td>
-						<td>{{ address.coin.name }}</td>
-						<td>{{ address.amount }}{{ address.coin.symbol }}</td>
-						<td>{{ address.price }}$</td>
-					</tr>
-				</tbody>
-			</table>
+			<div id="main" class="card">
+				<div class="card-body">
+					<a class="btn btn-success" @click="getLucky">Get Lucky</a>
+				</div>
+			</div>
 
+			<div id="history" class="card mt-2">
+				<div class="card-header bg-secondary">
+					<div class="card-title h5">Previous attempts</div>
+				</div>
+				<div class="card-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Address pair (public/wif)</th>
+								<th>Coin</th>
+								<th>Amount</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="address in addresses.slice(0,10)">
+								<td>
+									<small>{{ address.pair.publicAddress }}</small><br>
+									<small>{{ address.pair.privateWif }}</small>
+								</td>
+								<td>{{ address.coin.name }}</td>
+								<td>{{ address.amount }}{{ address.coin.symbol }}</td>
+								<td>{{ address.price }}$</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div id="faq" class="card text-left mt-2">
+				<div class="card-header bg-secondary">
+					<div class="card-title h5 text-center">
+						Frequently Asked Questions
+					</div>
+				</div>
+				<div class="card-body">
+					<details class="accordion" open>
+						<summary class="accordion-header c-hand">
+							<i class="icon icon-arrow-right mr-1"></i>
+							<b>Is this legit?</b>
+						</summary>
+						<div class="accordion-body">
+							<blockquote style="margin-left: 0.75rem;">
+								<p>Yes or no?</p>
+							</blockquote>
+						</div>
+					</details>
+				</div>
+			</div>
 		</div>
 
 		<script src="libs/jquery.min.js"></script>
@@ -100,7 +142,7 @@
 							var address = {
 								coin: coin,
 								amount: amount,
-								price: amount * coin.price,
+								price: amount * (coin.price || 0),
 								pair: pair
 							};
 							this.addresses.unshift(address);
