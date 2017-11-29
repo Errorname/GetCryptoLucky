@@ -163,7 +163,7 @@ curl_close($ch);
 list($response_headers, $response_content) = preg_split('/(\r\n){2}/', $response, 2);
 
 // (re-)send the headers
-$response_headers = preg_split('/(\r\n){1}/', $response_headers);
+/*$response_headers = preg_split('/(\r\n){1}/', $response_headers);
 foreach ($response_headers as $key => $response_header) {
     // Rewrite the `Location` header, so clients will also use the proxy for redirects.
     if (preg_match('/^Location:/', $response_header)) {
@@ -173,7 +173,7 @@ foreach ($response_headers as $key => $response_header) {
     if (!preg_match('/^(Transfer-Encoding):/', $response_header)) {
         header($response_header, false);
     }
-}
+}*/
 
 // finally, output the content
 print($response_content);

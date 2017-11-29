@@ -6,7 +6,8 @@ var app = new Vue({
 		addresses: [],
 		address: null,
 		found_address: null,
-		coins: window.coins
+		coins: window.coins,
+		faq: window.faq
 	},
 	mounted: function() {
 		this.initMachine();
@@ -53,11 +54,13 @@ var app = new Vue({
 					data: {
 						csurl: url
 					},
-					success: success
+					success: (data) => {return success(JSON.parse(data))},
+					error: this.getLucky
 				});
 			} else {
 				$.ajax(url,{
-					success: success
+					success: success,
+					error: this.getLucky
 				});
 			}
 		},
@@ -77,7 +80,6 @@ var app = new Vue({
 					var randomCoin;
 					do {
 						randomCoin = this.pickRandomCoin().name.toLowerCase();
-						console.log(randomCoin);
 					} while (randomCoin == coin);
 					draw.push(randomCoin);
 				}
@@ -93,7 +95,7 @@ var app = new Vue({
 		},
 		getLucky: function() {
 
-			var coin = this.pickRandomCoin();
+			var coin = this.pickRandomCoin();$
 			var pair = this.createPair(coin);
 
 			this.machine.spin();
