@@ -1,0 +1,16 @@
+.card .card-header {
+	padding-bottom: 0.8rem;
+}
+
+#history td {
+	padding: 0 0.4rem;
+}
+
+.machine {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.spin-button {
+	margin-top: 9.85rem;
+}

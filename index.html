@@ -7,15 +7,8 @@
 
 		<link rel="stylesheet" href="libs/spectre/spectre.min.css">
 		<link rel="stylesheet" href="libs/spectre/spectre-icons.min.css">
-		<style>
-			.card .card-header {
-				padding-bottom: 0.8rem;
-			}
-
-			#history td {
-				padding: 0 0.4rem;
-			}
-		</style>
+		<link rel="stylesheet" href="libs/cryptoslots/cryptoslots.css">
+		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
 		<div id="app" class="container grid-lg text-center">
@@ -23,7 +16,27 @@
 
 			<div id="main" class="card">
 				<div class="card-body">
-					<a class="btn btn-success" @click="getLucky">Get Lucky</a>
+					<a class="btn btn-success float-right spin-button" @click="getLucky" :class="{'disabled': spinning}">Get Lucky</a>
+					<div class="machine"></div>
+					<div v-if="address">
+						<div class="h4" style="margin: 1rem">{{ address.coin.name }} address</div>
+						<div class="columns">
+							<div class="col-10">
+								<p class="text-left">
+									<b>Public address:</b> {{ address.pair.publicAddress }}<br>
+									<b>Private WIF:</b> {{ address.pair.privateWif }}
+								</p>
+							</div>
+							<div class="col-2">
+								<div class="h1">
+									{{ address.amount }}
+									<svg class="coin" style="width: 1.5rem; height: 1.5rem;">
+										<use :xlink:href="'#icon-'+address.coin.name.toLowerCase()"></use>
+									</svg>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -82,76 +95,9 @@
 		<script src="libs/vue.js"></script>
 		<script src="libs/coinkey.bundle.js"></script>
 		<script src="libs/coininfo.bundle.js"></script>
+		<script src="libs/cryptoslots/cryptoslots.js"></script>
+		<script src="libs/cryptoslots/cryptoslots.html" type="text/html" id="slots_html"></script>
 		<script src="coins.js"></script>
-		<script>
-
-			var app = new Vue({
-				el: '#app',
-				data: {
-					addresses: [],
-					coins: window.coins
-				},
-				mounted: function() {
-					for (var code in this.coins) {
-						this.initCoin(this.coins[code]);
-					}
-				},
-				methods: {
-					pickRandomCoin: function() {
-						var keys = Object.keys(this.coins);
-						return this.coins[keys[Math.floor(keys.length * Math.random())]];
-					},
-					createPair: function(coin) {
-						return coinkey.createRandom(coininfo(coin.code));
-					},
-					checkBalance: function(coin, address, callback) {
-						//callback(0);
-						var url = coin.api.url.replace('{address}',address);
-						var success = function(data) {
-							callback(coin.api.callback(data));
-						}
-						if (coin.api.proxy) {
-							$.ajax('proxy.php',{
-								data: {
-									csurl: url
-								},
-								success: success
-							});
-						} else {
-							$.ajax(url,{
-								success: success
-							});
-						}
-					},
-					initCoin: function(coin) {
-						$.ajax('https://api.cryptonator.com/api/ticker/'+coin.code+'-usd',{
-							success: function(data) {
-								coin.price = parseFloat(data.ticker.price);
-							}
-						});
-					},
-					getLucky: function() {
-
-						var coin = this.pickRandomCoin();
-						var pair = this.createPair(coin);
-
-						address = pair.publicAddress;
-						//address = "16rCmCmbuWDhPjWTrpQGaU3EPdZF7MTdUk";
-
-						this.checkBalance(coin, address, function(amount) {
-							var address = {
-								coin: coin,
-								amount: amount,
-								price: amount * (coin.price || 0),
-								pair: pair
-							};
-							this.addresses.unshift(address);
-							//console.log(address);
-						}.bind(this));
-					}
-				}
-			});
-
-		</script>
+		<script src="app.js"></script>
 	</body>
 </html>
