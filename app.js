@@ -95,7 +95,7 @@ var app = new Vue({
 		},
 		getLucky: function() {
 
-			var coin = this.pickRandomCoin();$
+			var coin = this.pickRandomCoin();
 			var pair = this.createPair(coin);
 
 			this.machine.spin();
