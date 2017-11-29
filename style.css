@@ -14,3 +14,7 @@
 .spin-button {
 	margin-top: 9.85rem;
 }
+
+[v-cloak] {
+	display: none;
+}

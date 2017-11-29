@@ -21,7 +21,7 @@
 				<div class="card-body">
 					<a class="btn btn-success float-right spin-button" @click="getLucky" :class="{'disabled': spinning}">Get Lucky</a>
 					<div class="machine"></div>
-					<div v-if="address">
+					<div v-if="address" v-cloak>
 						<div class="h4" style="margin: 1rem">{{ address.coin.name }} address</div>
 						<div class="columns">
 							<div class="col-10">

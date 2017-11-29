@@ -72,10 +72,14 @@ var app = new Vue({
 			}
 			// First col is the address's coin
 			var draw = [coin];
-			// 2nd, 3rd and 4th are random with a 1/1000 probability for the same as 1st
-			for (var i = 0; i < 3; i++) {
-				if (Math.floor(Math.random()*1000) == 0) {
+			var good = 1;
+			// 2nd, 3rd and 4th are random with a 1/3 probability for the same as 1st
+			// The 5th also as a 1/3 probability if there isn't already 4 good coins
+			// Otherwise, the 5th will never be the same coin
+			for (var i = 0; i < 4; i++) {
+				if (good < 4 && Math.floor(Math.random()*3) == 0) {
 					draw.push(coin);
+					good++;
 				} else {
 					var randomCoin;
 					do {
@@ -84,12 +88,6 @@ var app = new Vue({
 					draw.push(randomCoin);
 				}
 			}
-			// If no amount, 5th is never the same as 1st
-			var randomCoin;
-			do {
-				randomCoin = this.pickRandomCoin().name.toLowerCase();
-			} while (randomCoin == coin);
-			draw.push(randomCoin);
 
 			return draw;
 		},
