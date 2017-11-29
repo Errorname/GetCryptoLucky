@@ -22,6 +22,12 @@ var faq = [
 			'<a href="http://bugcharmer.blogspot.fr/2012/06/how-big-is-2128.html" target="_blank">More on the subject</a>'
 	},
 	{
+		title: 'What\'s the point?',
+		description: 'I developed this application for several reasons. First of all, this is an introduction to cryptocurrency novices so they can understand how wallet generation is based on an algorithm and there is no database that delivers them. ' +
+			'Secondly, this is a demonstration that it is not impossible for a wallet to be generated twice, it\'s just highly improbable. ' +
+			'Finally, you are gonna play because, well, you never know!'
+	},
+	{
 		title: 'What are the supported currencies?',
 		description: 'At the moment, this application supports Bitcoin (BTC), Dogecoin (DOGE), MonaCoin (MONA), Litecoin (LTC), Dash (DASH), Namecoin (NMC), Peercoin (PPC), and BlackCoin (BLK).'
 	},
