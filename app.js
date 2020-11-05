@@ -61,11 +61,11 @@ var app = new Vue({
       // First col is the address's coin
       var draw = [coin]
       var good = 1
-      // 2nd, 3rd and 4th are random with a 1/3 probability for the same as 1st
-      // The 5th also as a 1/3 probability if there isn't already 4 good coins
+      // 2nd, 3rd and 4th are random with a 1/4 probability for the same as 1st
+      // The 5th also as a 1/4 probability if there isn't already 4 good coins
       // Otherwise, the 5th will never be the same coin
       for (var i = 0; i < 4; i++) {
-        if (good < 4 && Math.floor(Math.random() * 3) == 0) {
+        if (good < 4 && Math.floor(Math.random() * 4) == 0) {
           draw.push(coin)
           good++
         } else {
