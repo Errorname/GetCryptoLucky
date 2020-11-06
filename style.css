@@ -41,6 +41,10 @@
   display: none;
 }
 
+blockquote {
+  word-break: break-word;
+}
+
 [v-cloak] {
   display: none;
 }
